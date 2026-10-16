@@ -1,0 +1,102 @@
+[
+  {
+    "file": "src/main.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "-std=c11",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-Isrc",
+      "-MMD",
+      "-MP",
+      "-O2",
+      "-c",
+      "src/main.c",
+      "-o",
+      "build/main.o"
+    ],
+    "directory": "/home/sb/github/taka_lang",
+    "output": "build/main.o"
+  },
+  {
+    "file": "src/lexer/tokens.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "-std=c11",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-Isrc",
+      "-MMD",
+      "-MP",
+      "-O2",
+      "-c",
+      "src/lexer/tokens.c",
+      "-o",
+      "build/lexer/tokens.o"
+    ],
+    "directory": "/home/sb/github/taka_lang",
+    "output": "build/lexer/tokens.o"
+  },
+  {
+    "file": "src/lexer/tokenizer.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "-std=c11",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-Isrc",
+      "-MMD",
+      "-MP",
+      "-O2",
+      "-c",
+      "src/lexer/tokenizer.c",
+      "-o",
+      "build/lexer/tokenizer.o"
+    ],
+    "directory": "/home/sb/github/taka_lang",
+    "output": "build/lexer/tokenizer.o"
+  },
+  {
+    "file": "src/utils/arena.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "-std=c11",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-Isrc",
+      "-MMD",
+      "-MP",
+      "-O2",
+      "-c",
+      "src/utils/arena.c",
+      "-o",
+      "build/utils/arena.o"
+    ],
+    "directory": "/home/sb/github/taka_lang",
+    "output": "build/utils/arena.o"
+  },
+  {
+    "file": "src/utils/string.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "-std=c11",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-Isrc",
+      "-MMD",
+      "-MP",
+      "-O2",
+      "-c",
+      "src/utils/string.c",
+      "-o",
+      "build/utils/string.o"
+    ],
+    "directory": "/home/sb/github/taka_lang",
+    "output": "build/utils/string.o"
+  }
+]
