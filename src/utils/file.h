@@ -47,3 +47,10 @@ static inline BinFile read_file(MemArena* arena, const char* path) {
     return (BinFile) {.size = bytes_read, .data = data, .path = str8(path)};
 
 }
+
+static inline String8 bin_to_str8(BinFile* bin) {
+  return (String8) {
+    .data = bin->data,
+    .size = bin->size,
+  };
+}

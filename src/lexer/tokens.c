@@ -4,6 +4,7 @@ String8 tokenkind_to_string8(TokenKind kind) {
     switch (kind) {
         case TOKEN_EOF: return str8_lit("EOF");
         case TOKEN_INVALID: return str8_lit("INVALID");
+        case TOKEN_UNKNOWN: return str8_lit("UNKNOWN");
 
         case TOKEN_NUMBER: return str8_lit("NUMBER");
         case TOKEN_STRING: return str8_lit("STRING");
@@ -136,17 +137,24 @@ bool token_one_of_many(Token token, int n, ...) {
 
 void debug_token(Token token) {
     if (token_one_of_many(token, 3, TOKEN_NUMBER, TOKEN_IDENTIFIER, TOKEN_STRING)) {
-        printf("%.*s %.*s\n", str8_fmt(tokenkind_to_string8(token.kind)), str8_fmt(token.value));
+        printf("%.*s %.*s [%lu:%lu]\n",
+               str8_fmt(tokenkind_to_string8(token.kind)),
+               str8_fmt(token.value),
+               token.line, token.column);
     } else {
-        printf("%.*s\n", str8_fmt(tokenkind_to_string8(token.kind)));
+        printf("%.*s [%lu:%lu]\n",
+               str8_fmt(tokenkind_to_string8(token.kind)),
+               token.line, token.column);
     }
 }
 
 
 
-Token token_new(TokenKind kind, String8 value) {
+Token token_new(TokenKind kind, String8 value, u64 line, u64 column) {
     return (Token) {
         .kind = kind,
         .value = value,
+        .line = line,
+        .column = column,
     };
 }

@@ -1,0 +1,19 @@
+# Build artifacts
+build/
+*.o
+*.d
+
+# Compiler-generated precompiled headers
+*.gch
+
+# Local experiment files
+*.tk~
+
+# Editor state / tooling caches
+compile_commands.json
+.zig-cache/
+.cache/
+.semantic-search/
+
+# OS junk
+.DS_Store

@@ -133,7 +133,9 @@ enum TokenKind {
     TOKEN_BOOL,
     TOKEN_SVIEW,
 
+    TOKEN_UNKNOWN,
     TOKEN_COUNT,
+
 
 };
 
@@ -141,7 +143,8 @@ typedef struct Token Token;
 struct Token {
     String8 value;
     TokenKind kind;
-
+    u64 line;   // 1-alapú
+    u64 column; // 1-alapú
 };
 
 String8 tokenkind_to_string8(TokenKind kind);
@@ -150,4 +153,4 @@ bool token_one_of_many(Token token, int n, ...);
 
 void debug_token(Token token);
 
-Token token_new(TokenKind kind, String8 value);
+Token token_new(TokenKind kind, String8 value, u64 line, u64 column);
