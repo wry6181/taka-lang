@@ -140,11 +140,11 @@ void debug_token(Token token) {
         printf("%.*s %.*s [%llu:%llu]\n",
                str8_fmt(tokenkind_to_string8(token.kind)),
                str8_fmt(token.value),
-               token.line, token.column);
+               (unsigned long long)token.line, (unsigned long long)token.column);
     } else {
         printf("%.*s [%llu:%llu]\n",
                str8_fmt(tokenkind_to_string8(token.kind)),
-               token.line, token.column);
+               (unsigned long long)token.line, (unsigned long long)token.column);
     }
 }
 

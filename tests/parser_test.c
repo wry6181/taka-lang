@@ -59,20 +59,34 @@ int main(void) {
     assert(!parser_has_tokens(&p));
     assert(parser_current_kind(&p) == TOKEN_EOF);
 
-    // Parse() port: returns a block statement wrapping one stub stmt per
-    // non-EOF token (Go: ast.BlockStmt{Body: Body})
+    // Parse() port with stmt_lu dispatch: `const x = 42;` is claimed by the
+    // CONST handler and parsed as one STMT_VAR; the trailing EOF never
+    // becomes a statement (Go: return ast.BlockStmt{Body: Body}).
     parser_free(&p);
-    Stmt* program = parse_program(arena, toks, ntoks);
+    Token stmt_toks[] = {
+        token_new(TOKEN_CONST, str8_lit("const"), 1, 1),
+        token_new(TOKEN_IDENTIFIER, str8_lit("x"), 1, 7),
+        token_new(TOKEN_ASSIGNMENT, str8_lit("="), 1, 9),
+        token_new(TOKEN_NUMBER, str8_lit("42"), 1, 11),
+        token_new(TOKEN_SEMICOLON, str8_lit(";"), 1, 13),
+        token_new(TOKEN_EOF, str8_lit(""), 1, 14),
+    };
+    const u64 nstmt_toks = sizeof(stmt_toks) / sizeof(stmt_toks[0]);
+
+    Stmt* program = parse_program(arena, stmt_toks, nstmt_toks);
     assert(program->kind == STMT_BLOCK);
     Vector* body = program->as.block.body;
     assert(body != NULL);
-    assert(vec_len(body) == ntoks - 1); // EOF never becomes a stmt
-    for (u64 i = 0; i < vec_len(body); ++i) {
-        assert(vec_at_ptr(body, i) == NULL); // stub parse_stmt
-    }
+    assert(vec_len(body) == 1); // one statement, EOF excluded
+    Stmt* var = vec_at_ptr(body, 0);
+    assert(var != NULL && var->kind == STMT_VAR);
+    assert(var->as.var_expr.is_const);
+    assert(var->as.var_expr.var_name.size == 1);
+    assert(var->as.var_expr.assigned_value.kind == EXPR_NUMBER);
 
+    const u64 nstmts = vec_len(body);
     arena_destroy(arena);
-    printf("parser helper test OK (%llu tokens -> %llu stmts)\n", (unsigned long long)ntoks,
-           (unsigned long long)(ntoks - 1));
+    printf("parser helper test OK (%llu tokens -> %llu stmts)\n", (unsigned long long)nstmt_toks,
+           (unsigned long long)nstmts);
     return 0;
 }

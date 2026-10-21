@@ -1,4 +1,6 @@
 #pragma once
+#include <stdlib.h>
+
 #include "ast/ast.h"
 #include "lexer/tokens.h"
 #include "utils/utils.h"
@@ -32,6 +34,16 @@ bool parser_has_tokens(const Parser* p);        // hasTokens() — also stops at
 // there), on success advance and return the consumed token.
 Token parser_expect_error(Parser* p, TokenKind expected, const char* err);
 Token parser_expect(Parser* p, TokenKind expected);
+
+// the Go reference panics on broken-stream / missing-handler paths:
+// T_FATAL + exit keeps that contract — deterministic in every build
+// (unlike assert, which vanishes under NDEBUG)
+#if defined(__GNUC__)
+__attribute__((noreturn))
+#endif
+static inline void parser_die(void) {
+  exit(1);
+}
 
 // Statement dispatch: a registered StmtHandler for the current token wins;
 // otherwise the statement is parsed as an expression statement

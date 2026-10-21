@@ -33,11 +33,11 @@ int main(int argc, char** argv) {
             fprintf(stderr, "error [%s] %.*s [%llu:%llu]\n",
                     path,
                     (int)token.value.size, (char*)token.value.data,
-                    token.line, token.column);
+                    (unsigned long long)token.line, (unsigned long long)token.column);
         }
     }
     if (error_count > 0) {
-        fprintf(stderr, "%llu error(s)\n", error_count);
+        fprintf(stderr, "%llu error(s)\n", (unsigned long long)error_count);
         return 1;
     }
 
