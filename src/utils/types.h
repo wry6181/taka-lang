@@ -33,7 +33,7 @@ typedef struct {
 
 #define UNUSED(x) ((void)(x))
 // #define UNREACHABLE() ASSERT(!"Unreachable code!");
-// #define NOTINPLAMENTED() ASSERT(!"Not inplamented yet!")
+#define NOTINPLAMENTED(...) ASSERT(!"Not inplamented yet!")
 
 #define NUM_ARGS(...) (sizeof((int[]){__VA_ARGS__}) / sizeof(int))
 

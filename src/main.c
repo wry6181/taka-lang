@@ -2,9 +2,12 @@
 
 #include "utils/utils.h"
 #include "lexer/tokenizer.h"
+#include "parser/parser.h"
 
 int main(int argc, char** argv) {
-    const char* path = argc > 1 ? argv[1] : "example/00.tk";
+    log_system_init();
+
+    const char* path = argc > 1 ? argv[1] : "example/02.tk";
 
     MemArena* file_arena = arena_create(MByte(10));
     MemArena* tokenizer_arena = arena_create(MByte(10));
@@ -36,6 +39,14 @@ int main(int argc, char** argv) {
         fprintf(stderr, "%lu error(s)\n", error_count);
         return 1;
     }
+
+    // parser pipeline — statement dispatch is still a stub (parse_stmt
+    // only advances), so this just proves the Parse() port runs end to end
+    MemArena* parser_arena = arena_create(MByte(10));
+    Stmt* program = parse_program(parser_arena, tokenizer->tokens, tokenizer->token_count);
+    printf("parsed %llu statement(s) (stub)\n",
+           (unsigned long long)vec_len(program->as.block.body));
+    arena_destroy(parser_arena);
 
     arena_destroy(file_arena);
     arena_destroy(tokenizer_arena);

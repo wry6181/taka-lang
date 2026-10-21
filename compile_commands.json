@@ -98,5 +98,105 @@
     ],
     "directory": "/home/sb/github/taka_lang",
     "output": "build/utils/string.o"
+  },
+  {
+    "file": "src/utils/vector.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "-std=c11",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-Isrc",
+      "-MMD",
+      "-MP",
+      "-O2",
+      "-c",
+      "src/utils/vector.c",
+      "-o",
+      "build/utils/vector.o"
+    ],
+    "directory": "/home/sb/github/taka_lang",
+    "output": "build/utils/vector.o"
+  },
+  {
+    "file": "src/utils/logger.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "-std=c11",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-Isrc",
+      "-MMD",
+      "-MP",
+      "-O2",
+      "-c",
+      "src/utils/logger.c",
+      "-o",
+      "build/utils/logger.o"
+    ],
+    "directory": "/home/sb/github/taka_lang",
+    "output": "build/utils/logger.o"
+  },
+  {
+    "file": "src/ast/ast.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "-std=c11",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-Isrc",
+      "-MMD",
+      "-MP",
+      "-O2",
+      "-c",
+      "src/ast/ast.c",
+      "-o",
+      "build/ast/ast.o"
+    ],
+    "directory": "/home/sb/github/taka_lang",
+    "output": "build/ast/ast.o"
+  },
+  {
+    "file": "src/parser/parser.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "-std=c11",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-Isrc",
+      "-MMD",
+      "-MP",
+      "-O2",
+      "-c",
+      "src/parser/parser.c",
+      "-o",
+      "build/parser/parser.o"
+    ],
+    "directory": "/home/sb/github/taka_lang",
+    "output": "build/parser/parser.o"
+  },
+  {
+    "file": "src/utils/map_khash.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "-std=c11",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-Isrc",
+      "-MMD",
+      "-MP",
+      "-O2",
+      "-c",
+      "src/utils/map_khash.c",
+      "-o",
+      "build/utils/map_khash.o"
+    ],
+    "directory": "/home/sb/github/taka_lang",
+    "output": "build/utils/map_khash.o"
   }
 ]
