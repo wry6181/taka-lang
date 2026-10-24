@@ -33,8 +33,9 @@ bool parser_has_tokens(const Parser* p);        // hasTokens() — also stops at
 Token parser_expect_error(Parser* p, TokenKind expected, const char* err);
 Token parser_expect(Parser* p, TokenKind expected);
 
-// Temporary stub until stmt_lu dispatch lands: advances one token so the
-// parse loop always terminates, returns NULL.
+// Statement dispatch: a registered StmtHandler for the current token wins;
+// otherwise the statement is parsed as an expression statement
+// (expr ;). Advances past exactly one statement.
 Stmt* parse_stmt(Parser* p);
 
 // Port of Go Parse(): parse the whole token stream into a block statement

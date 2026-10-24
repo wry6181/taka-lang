@@ -1,3 +1,5 @@
+#pragma once
+
 #include "utils/types.h"
 #include "utils/utils.h"
 #include "lexer/tokens.h"

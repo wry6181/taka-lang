@@ -1,11 +1,13 @@
 #include "parser.h"
 #include "lookup.h"
+#include "stmt.h"
 
 #include <stdlib.h>
 
 Parser create_parser(MemArena* arena, Token* tokens, u64 count) {
   Lookups* lookups = PUSH_STRUCT(arena, Lookups);
   lookup_init(lookups, arena);
+  lookup_register_stmts(lookups);
   return (Parser){
       .arena = arena,
       .tokens = tokens,
@@ -21,8 +23,6 @@ void parser_free(Parser* p) {
   }
 }
 
-// the Go reference panics on these paths: T_FATAL + exit keeps that
-// contract — deterministic in every build (unlike assert under NDEBUG)
 #if defined(__GNUC__)
 __attribute__((noreturn))
 #endif
@@ -148,11 +148,6 @@ Expr* parse_binary_expr(Parser* p, Expr* left, BindingPower bp) {
   return e;
 }
 
-// TODO: stmt_lu dispatch — lookup_stmt(p->lookups, parser_current_kind(p))
-Stmt* parse_stmt(Parser* p) {
-  parser_advance(p);
-  return NULL;
-}
 
 Stmt* parse_program(MemArena* arena, Token* tokens, u64 count) {
   Parser parser = create_parser(arena, tokens, count);

@@ -137,12 +137,12 @@ bool token_one_of_many(Token token, int n, ...) {
 
 void debug_token(Token token) {
     if (token_one_of_many(token, 3, TOKEN_NUMBER, TOKEN_IDENTIFIER, TOKEN_STRING)) {
-        printf("%.*s %.*s [%lu:%lu]\n",
+        printf("%.*s %.*s [%llu:%llu]\n",
                str8_fmt(tokenkind_to_string8(token.kind)),
                str8_fmt(token.value),
                token.line, token.column);
     } else {
-        printf("%.*s [%lu:%lu]\n",
+        printf("%.*s [%llu:%llu]\n",
                str8_fmt(tokenkind_to_string8(token.kind)),
                token.line, token.column);
     }

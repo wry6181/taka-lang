@@ -1,0 +1,4 @@
+foo = 32;
+a = 2.2;
+
+const isGreater = foo < 21;
