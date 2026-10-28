@@ -56,13 +56,13 @@ int main(void) {
         };
         Expr* e = parse_one(arena, toks, 6);
         assert(e->kind == EXPR_BINARY);
-        assert(e->as.bin.oprt.kind == TOKEN_PLUS);
+        assert(e->as.bin.oper.kind == TOKEN_PLUS);
         assert(e->as.bin.lhs->kind == EXPR_NUMBER);
         assert(e->as.bin.lhs->as.number.value == 10);
 
         Expr* rhs = e->as.bin.rhs;
         assert(rhs->kind == EXPR_BINARY);
-        assert(rhs->as.bin.oprt.kind == TOKEN_STAR);
+        assert(rhs->as.bin.oper.kind == TOKEN_STAR);
         assert(rhs->as.bin.lhs->as.number.value == 6);
         assert(rhs->as.bin.rhs->as.number.value == 2);
     }
@@ -74,14 +74,12 @@ int main(void) {
             token_new(TOKEN_NUMBER, str8_lit("10"), 1, 5),    token_new(TOKEN_EOF, str8_lit(""), 1, 7),
         };
         Expr* e = parse_one(arena, toks, 4);
-        assert(e->kind == EXPR_BINARY && e->as.bin.oprt.kind == TOKEN_PLUS);
+        assert(e->kind == EXPR_BINARY && e->as.bin.oper.kind == TOKEN_PLUS);
         assert(e->as.bin.lhs->kind == EXPR_SYMBOL);
         assert(e->as.bin.rhs->kind == EXPR_NUMBER);
     }
 
-    // 10 - 3 - 4  ->  10 - (3 - 4)
-    // (the reference passes the OUTER bp into the LED, so at this stage
-    // every binary op folds right — same tree the Go version builds)
+    // 10 - 3 - 4  ->  (10 - 3) - 4  (same-precedence ops fold left)
     {
         Token toks[] = {
             token_new(TOKEN_NUMBER, str8_lit("10"), 1, 1), token_new(TOKEN_MINUS, str8_lit("-"), 1, 4),
@@ -89,19 +87,16 @@ int main(void) {
             token_new(TOKEN_NUMBER, str8_lit("4"), 1, 10), token_new(TOKEN_EOF, str8_lit(""), 1, 11),
         };
         Expr* e = parse_one(arena, toks, 6);
-        assert(e->kind == EXPR_BINARY && e->as.bin.oprt.kind == TOKEN_MINUS);
-        assert(e->as.bin.lhs->as.number.value == 10);
+        assert(e->kind == EXPR_BINARY && e->as.bin.oper.kind == TOKEN_MINUS);
+        assert(e->as.bin.rhs->as.number.value == 4);
 
-        Expr* rhs = e->as.bin.rhs;
-        assert(rhs->kind == EXPR_BINARY && rhs->as.bin.oprt.kind == TOKEN_MINUS);
-        assert(rhs->as.bin.lhs->as.number.value == 3);
-        assert(rhs->as.bin.rhs->as.number.value == 4);
+        Expr* lhs = e->as.bin.lhs;
+        assert(lhs->kind == EXPR_BINARY && lhs->as.bin.oper.kind == TOKEN_MINUS);
+        assert(lhs->as.bin.lhs->as.number.value == 10);
+        assert(lhs->as.bin.rhs->as.number.value == 3);
     }
 
-    // 8 * 2 + 1  ->  8 * (2 + 1)
-    // The stage-02 reference passes the OUTER bp into the LED, so the
-    // right side re-enters at the top and folds everything it meets —
-    // same (right-leaning) tree the Go version builds at this stage.
+    // 8 * 2 + 1  ->  (8 * 2) + 1  (* binds tighter than +)
     {
         Token toks[] = {
             token_new(TOKEN_NUMBER, str8_lit("8"), 1, 1),   token_new(TOKEN_STAR, str8_lit("*"), 1, 3),
@@ -109,13 +104,13 @@ int main(void) {
             token_new(TOKEN_NUMBER, str8_lit("1"), 1, 9),   token_new(TOKEN_EOF, str8_lit(""), 1, 10),
         };
         Expr* e = parse_one(arena, toks, 6);
-        assert(e->kind == EXPR_BINARY && e->as.bin.oprt.kind == TOKEN_STAR);
-        assert(e->as.bin.lhs->as.number.value == 8);
+        assert(e->kind == EXPR_BINARY && e->as.bin.oper.kind == TOKEN_PLUS);
+        assert(e->as.bin.rhs->as.number.value == 1);
 
-        Expr* rhs = e->as.bin.rhs;
-        assert(rhs->kind == EXPR_BINARY && rhs->as.bin.oprt.kind == TOKEN_PLUS);
-        assert(rhs->as.bin.lhs->as.number.value == 2);
-        assert(rhs->as.bin.rhs->as.number.value == 1);
+        Expr* lhs = e->as.bin.lhs;
+        assert(lhs->kind == EXPR_BINARY && lhs->as.bin.oper.kind == TOKEN_STAR);
+        assert(lhs->as.bin.lhs->as.number.value == 8);
+        assert(lhs->as.bin.rhs->as.number.value == 2);
     }
 
     arena_destroy(arena);

@@ -1,10 +1,14 @@
 #include "parser.h"
 #include "lookup.h"
 #include "stmt.h"
+#include "expr.h"
+
+#include <stdlib.h>
 
 Parser create_parser(MemArena* arena, Token* tokens, u64 count) {
   Lookups* lookups = PUSH_STRUCT(arena, Lookups);
   lookup_init(lookups, arena);
+  lookup_register_exprs(lookups);
   lookup_register_stmts(lookups);
   return (Parser){
       .arena = arena,
@@ -19,6 +23,10 @@ void parser_free(Parser* p) {
   if (p) {
     lookup_free(p->lookups);
   }
+}
+
+void parser_die(void) {
+  exit(1);
 }
 
 Token parser_current(const Parser* p) {
@@ -62,8 +70,6 @@ Token parser_expect_error(Parser* p, TokenKind expected, const char* err) {
 Token parser_expect(Parser* p, TokenKind expected) {
   return parser_expect_error(p, expected, NULL);
 }
-
-#include "expr.h"
 
 Stmt* parse_program(MemArena* arena, Token* tokens, u64 count) {
   Parser parser = create_parser(arena, tokens, count);

@@ -71,32 +71,6 @@ static inline void lookup_init(Lookups* lu, MemArena* arena) {
   lu->nud = map_new(arena);
   lu->led = map_new(arena);
   lu->stmt = map_new(arena);
-
-  // Logical
-  lookup_register_led(lu, TOKEN_AMP_AMP, logical, parse_binary_expr);
-  lookup_register_led(lu, TOKEN_PIPE_PIPE, logical, parse_binary_expr);
-  lookup_register_led(lu, TOKEN_DOT_DOT, logical, parse_binary_expr);
-
-  // Relational
-  lookup_register_led(lu, TOKEN_LESS, relational, parse_binary_expr);
-  lookup_register_led(lu, TOKEN_LESS_EQUALS, relational, parse_binary_expr);
-  lookup_register_led(lu, TOKEN_GREATER, relational, parse_binary_expr);
-  lookup_register_led(lu, TOKEN_GREATER_EQUALS, relational, parse_binary_expr);
-  lookup_register_led(lu, TOKEN_EQUALS, relational, parse_binary_expr);
-  lookup_register_led(lu, TOKEN_NOT_EQUALS, relational, parse_binary_expr);
-
-  // Additive & Multiplicative
-  lookup_register_led(lu, TOKEN_PLUS, additive, parse_binary_expr);
-  lookup_register_led(lu, TOKEN_MINUS, additive, parse_binary_expr);
-
-  lookup_register_led(lu, TOKEN_STAR, multiplicative, parse_binary_expr);
-  lookup_register_led(lu, TOKEN_SLASH, multiplicative, parse_binary_expr);
-  lookup_register_led(lu, TOKEN_PERCENT, multiplicative, parse_binary_expr);
-
-  // Literals & Symbols
-  lookup_register_nud(lu, TOKEN_NUMBER, parse_primary_expr);
-  lookup_register_nud(lu, TOKEN_STRING, parse_primary_expr);
-  lookup_register_nud(lu, TOKEN_IDENTIFIER, parse_primary_expr);
 }
 
 static inline void lookup_free(Lookups* lu) {

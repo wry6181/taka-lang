@@ -6,6 +6,17 @@ static void print_indent(FILE* out, u32 depth) {
   }
 }
 
+static void print_token(FILE* out, Token op) {
+  String8 kind = tokenkind_to_string8(op.kind);
+  fprintf(out, "kind=%.*s value=", str8_fmt(kind));
+  if (op.value.size > 0) {
+    fprintf(out, "\"%.*s\"", str8_fmt(op.value));
+  } else {
+    fputs("<none>", out);
+  }
+  fprintf(out, " [%llu:%llu]", (unsigned long long)op.line, (unsigned long long)op.column);
+}
+
 static void print_expr_to(FILE* out, Expr* expr, u32 depth) {
   print_indent(out, depth);
 
@@ -24,17 +35,10 @@ static void print_expr_to(FILE* out, Expr* expr, u32 depth) {
     case EXPR_SYMBOL:
       fprintf(out, "Symbol %.*s\n", str8_fmt(expr->as.symbol.value));
       break;
-    case EXPR_BINARY: {
-      Token op = expr->as.bin.oprt;
-      String8 kind = tokenkind_to_string8(op.kind);
-      fprintf(out, "Binary kind=%.*s value=", str8_fmt(kind));
-      if (op.value.size > 0) {
-        fprintf(out, "\"%.*s\"", str8_fmt(op.value));
-      } else {
-        fputs("<none>", out);
-      }
-      fprintf(out, " [%llu:%llu]\n", (unsigned long long)op.line,
-              (unsigned long long)op.column);
+    case EXPR_BINARY:
+      fputs("Binary ", out);
+      print_token(out, expr->as.bin.oper);
+      fputc('\n', out);
       print_indent(out, depth + 1);
       fputs("left:\n", out);
       print_expr_to(out, expr->as.bin.lhs, depth + 2);
@@ -42,7 +46,25 @@ static void print_expr_to(FILE* out, Expr* expr, u32 depth) {
       fputs("right:\n", out);
       print_expr_to(out, expr->as.bin.rhs, depth + 2);
       break;
-    }
+    case EXPR_PREFIX:
+      fputs("Prefix ", out);
+      print_token(out, expr->as.prefix.oper);
+      fputc('\n', out);
+      print_indent(out, depth + 1);
+      fputs("right:\n", out);
+      print_expr_to(out, expr->as.prefix.right_expr, depth + 2);
+      break;
+    case EXPR_ASSIGNMENT:
+      fputs("Assignment ", out);
+      print_token(out, expr->as.assignment.oper);
+      fputc('\n', out);
+      print_indent(out, depth + 1);
+      fputs("target:\n", out);
+      print_expr_to(out, expr->as.assignment.assigne_expr, depth + 2);
+      print_indent(out, depth + 1);
+      fputs("value:\n", out);
+      print_expr_to(out, expr->as.assignment.rhs, depth + 2);
+      break;
     default:
       fprintf(out, "<unknown expr kind %d>\n", (int)expr->kind);
       break;

@@ -45,4 +45,5 @@ Stmt* parse_var_stmt(Parser* p) {
 static inline void lookup_register_stmts(Lookups* lu) {
   lookup_register_stmt(lu, TOKEN_IDENTIFIER, parse_var_stmt);
   lookup_register_stmt(lu, TOKEN_CONST, parse_var_stmt);
+
 }

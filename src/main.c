@@ -8,7 +8,7 @@
 int main(int argc, char** argv) {
     log_system_init();
 
-    const char* path = argc > 1 ? argv[1] : "example/03.tk";
+    const char* path = argc > 1 ? argv[1] : "example/04.tk";
 
     MemArena* file_arena = arena_create(MByte(10));
     MemArena* tokenizer_arena = arena_create(MByte(10));
