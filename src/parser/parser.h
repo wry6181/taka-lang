@@ -4,6 +4,12 @@
 #include "utils/utils.h"
 
 typedef struct Lookups Lookups; // defined in parser/lookup.h
+
+typedef struct ParserSymbol {
+  String8 name;
+  bool is_mutable;
+} ParserSymbol;
+
 typedef struct Parser Parser;
 struct Parser {
   MemArena* arena; // AST nodes are allocated here
@@ -11,7 +17,28 @@ struct Parser {
   u64 count;
   u64 pos;
   Lookups* lookups; // the four token lookups (bp/nud/led/stmt)
+  Vector* symbols;  // declarations: name + mutability
 };
+
+static inline ParserSymbol* parser_find_symbol(Parser* p, String8 name) {
+  for (u64 i = 0; i < vec_len(p->symbols); ++i) {
+    ParserSymbol* sym = vec_at(p->symbols, i);
+    if (sym && str8_eq(sym->name, name)) {
+      return sym;
+    }
+  }
+  return NULL;
+}
+
+static inline void parser_declare_symbol(Parser* p, String8 name, bool is_mutable) {
+  ParserSymbol* sym = parser_find_symbol(p, name);
+  if (sym) {
+    sym->is_mutable = is_mutable;
+    return;
+  }
+  ParserSymbol new_sym = {.name = name, .is_mutable = is_mutable};
+  vec_push(p->symbols, &new_sym);
+}
 
 // Go: createParser(tokens) — the lookups live on the parser here instead
 // of package globals (same behavior, cleaner C).

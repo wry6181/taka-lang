@@ -16,6 +16,7 @@ Parser create_parser(MemArena* arena, Token* tokens, u64 count) {
       .count = count,
       .pos = 0,
       .lookups = lookups,
+      .symbols = vec_new(arena, sizeof(ParserSymbol), 0),
   };
 }
 

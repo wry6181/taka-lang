@@ -89,8 +89,28 @@ Expr* parse_prefix_expr(Parser* p) {
   return e;
 }
 
+static inline void parser_check_assignment(Parser* p, Expr* target, Token op) {
+  if (target->kind != EXPR_SYMBOL) {
+    T_FATAL("parser: invalid assignment target [%lu:%lu]", op.line, op.column);
+    parser_die();
+  }
+
+  ParserSymbol* sym = parser_find_symbol(p, target->as.symbol.value);
+  if (!sym) {
+    T_FATAL("parser: assignment to undeclared variable %.*s [%lu:%lu]",
+            str8_fmt(target->as.symbol.value), op.line, op.column);
+    parser_die();
+  }
+  if (!sym->is_mutable) {
+    T_FATAL("parser: cannot assign to const variable %.*s [%lu:%lu]",
+            str8_fmt(target->as.symbol.value), op.line, op.column);
+    parser_die();
+  }
+}
+
 Expr* parse_assignment_expr(Parser* p, Expr* left, BindingPower bp) {
   Token op = parser_advance(p);
+  parser_check_assignment(p, left, op);
   Expr* right = parse_expr(p, bp);
 
   Expr* e = PUSH_STRUCT_ZERO(p->arena, Expr);
