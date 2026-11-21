@@ -1,0 +1,27 @@
+id = "taka"
+name = "Taka"
+version = "0.1.0"
+schema_version = 1
+description = "Taka language support with tree-sitter highlighting and the Taka language server."
+repository = "https://github.com/belasolyom/taka-lang"
+authors = ["Taka contributors"]
+themes = []
+icon_themes = []
+languages = ["languages/taka"]
+capabilities = []
+
+[lib]
+kind = "Rust"
+version = "0.7.0"
+
+[grammars.taka]
+repository = "file:///Users/belasolyom/github/taka-lang/zed-extension/grammars/tree-sitter-taka"
+rev = "4d86e8ff8c549f8983b35f932456f4e95a0ad701"
+
+[language_servers.taka-lsp]
+name = "Taka LSP"
+languages = ["Taka"]
+
+[context_servers]
+
+[slash_commands]

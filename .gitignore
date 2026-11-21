@@ -17,3 +17,8 @@ compile_commands.json
 
 # OS junk
 .DS_Store
+zed-extension/target/
+zed-extension/grammars/tree-sitter-taka/src/
+zed-extension/grammars/tree-sitter-taka/tree-sitter-taka.wasm
+zed-extension/grammars/tree-sitter-taka/node_modules/
+__pycache__/

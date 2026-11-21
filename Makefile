@@ -114,8 +114,9 @@ test: $(TARGET) $(DIAG_MSG)
 	$(TEST_BUILD)/grammar_test
 	$(TEST_BUILD)/sema_test
 	TAKA_TEST_SANITIZE="$(SANITIZE)" $(TEST_BUILD)/codegen_test
+	python3 $(TEST_DIR)/lsp_test.py tools/taka_lsp.py $(TARGET)
 	@for file in example/*.tk; do ./$(TARGET) "$$file" > /dev/null || exit 1; done
-	@echo "map+vector+parser+expr+grammar+sema+codegen+example tests OK"
+	@echo "map+vector+parser+expr+grammar+sema+codegen+lsp+example tests OK"
 
 # make fuzz: libFuzzer + ASan/UBSan (clang szükséges).
 FUZZ_CC ?= $(shell if [ -x /opt/homebrew/opt/llvm/bin/clang ]; then echo /opt/homebrew/opt/llvm/bin/clang; else echo clang; fi)
@@ -135,6 +136,9 @@ test-asan:
 	$(MAKE) clean
 	$(MAKE) CC=$(FUZZ_CC) test SANITIZE=address,undefined
 
+install-zed:
+	./tools/install_zed_extension.sh
+
 analyze:
 	scan-build --status-bugs $(MAKE) CC=$(FUZZ_CC) clean all
 
@@ -147,6 +151,6 @@ bench:
 	@echo
 	$(TEST_BUILD)/bench_arena arena
 
-.PHONY: all debug release run clean rebuild compdb test test-asan analyze bench fuzz
+.PHONY: all debug release run clean rebuild compdb test test-asan install-zed analyze bench fuzz
 
 -include $(DEPS)
