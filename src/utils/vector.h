@@ -33,9 +33,12 @@ u64 vec_len(const Vector* v);
 // Keep the allocation, drop the elements (reuse as empty).
 void vec_clear(Vector* v);
 
+// Drop the last element. No-op on an empty/NULL vector.
+void vec_pop(Vector* v);
+
 // Pointer-element sugar: []T* vectors without manual &/* plumbing.
 static inline void vec_push_ptr(Vector* v, void* ptr) {
-    vec_push(v, &ptr);
+    vec_push(v, (const void *)&ptr);
 }
 
 static inline void* vec_at_ptr(const Vector* v, u64 index) {

@@ -121,8 +121,9 @@ b8 logframe_push(log_frame* frame, log_level level, String8 message) {
 }
 
 void log_output(log_level level, const char* fmt, ...) {
-  b8 is_error = level < LOG_LEVEL_WARNING;
+  bool is_error = level < LOG_LEVEL_WARNING;
 
+  char tmp[512] = {0};
   String8 body = {0};
   log_frame* frame = NULL;
   pthread_mutex_lock(&g_frame_mutex);
@@ -137,8 +138,6 @@ void log_output(log_level level, const char* fmt, ...) {
   pthread_mutex_unlock(&g_frame_mutex);
 
   if (!frame) {
-    // no frame active (e.g. very early startup) — fall back to a small stack buf
-    char tmp[512];
     va_list args;
     va_start(args, fmt);
     vsnprintf(tmp, sizeof(tmp), fmt, args);

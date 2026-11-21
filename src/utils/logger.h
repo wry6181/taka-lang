@@ -54,7 +54,7 @@ void log_system_init(void); // one-time, call at startup — line buffering etc
 void log_set_current_frame(log_frame* frame);
 void log_set_file_output(const char* path); // tee every log line to this file (append)
 void log_set_crash_dump_path(const char* path); // on LOG_LEVEL_FATAL, dump current frame here
-void log_output(log_level level, const char* fmt, ...);
+void log_output(log_level level, const char* fmt, ...) T_PRINTF(2, 3);
 
 void report_assertion_failure(const char* expression, const char* message,
                               const char* file, u32 line);

@@ -14,6 +14,12 @@ struct Map {
     khash_t(map)* h;
 };
 
+static u64 g_live_maps = 0;
+
+u64 map_debug_live_count(void) {
+    return g_live_maps;
+}
+
 Map* map_new(MemArena* arena) {
     (void)arena; // malloc-backed backend
 
@@ -26,6 +32,7 @@ Map* map_new(MemArena* arena) {
         free(map);
         return NULL;
     }
+    g_live_maps++;
     return map;
 }
 
@@ -33,6 +40,7 @@ void map_free(Map* map) {
     if (!map) {
         return;
     }
+    g_live_maps--;
     kh_destroy_map(map->h);
     free(map);
 }

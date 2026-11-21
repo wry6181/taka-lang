@@ -36,3 +36,4 @@ void *arena_push(MemArena *arena, u64 size, b32 zero);
 void arena_pop(MemArena *arena, u64 size, b32 zero);
 void arena_pop_to(MemArena *arena, u64 new_pos, b32 zero);
 void arena_clear(MemArena *arena, b32 zero);
+u64 arena_debug_live_count(void);

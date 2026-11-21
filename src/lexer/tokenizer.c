@@ -49,6 +49,21 @@ bool is_digit(u8 c) {
     return c >= '0' && c <= '9';
 }
 
+static bool tokenizer_try_consume_suffix(Tokenizer* t, const char* suffix) {
+    u64 i = 0;
+    while (suffix[i] != '\0') {
+        if (t->pos + i >= t->source.size || t->source.data[t->pos + i] != (u8)suffix[i]) {
+            return FALSE;
+        }
+        ++i;
+    }
+    while (i > 0) {
+        tokenizer_advance(t);
+        --i;
+    }
+    return TRUE;
+}
+
 bool is_alpha(u8 c) {
     return (c >= 'a' && c <= 'z') ||
            (c >= 'A' && c <= 'Z') ||
@@ -220,6 +235,9 @@ void tokenizer_tokenize(Tokenizer* t) {
 
             String8 value = tokenizer_slice(t, start, t->pos);
             TokenKind kind = tokenizer_keyword_kind(value);
+            if (kind == TOKEN_IDENTIFIER && str8_eq(value, str8_lit("_"))) {
+                kind = TOKEN_WILDCARD;
+            }
 
             tokenizer_push(t, kind, start, line, column);
             continue;
@@ -227,33 +245,79 @@ void tokenizer_tokenize(Tokenizer* t) {
 
         // Szám literál: dec / hex / bin, lebegőpontos, aláhúzásokkal
         if (is_digit(c)) {
+            bool is_float = FALSE;
+            bool bad_prefix = FALSE;
             if (c == '0' && (n == 'x' || n == 'X')) {
                 tokenizer_advance(t); // 0
                 tokenizer_advance(t); // x
+                bool any_digit = FALSE;
                 while (!tokenizer_at_eof(t) &&
                        (is_hex_digit(tokenizer_peek(t)) || tokenizer_peek(t) == '_')) {
+                    if (is_hex_digit(tokenizer_peek(t))) {
+                        any_digit = TRUE;
+                    }
                     tokenizer_advance(t);
                 }
+                bad_prefix = !any_digit;
             } else if (c == '0' && (n == 'b' || n == 'B')) {
                 tokenizer_advance(t); // 0
                 tokenizer_advance(t); // b
+                bool any_digit = FALSE;
                 while (!tokenizer_at_eof(t) &&
                        (is_bin_digit(tokenizer_peek(t)) || tokenizer_peek(t) == '_')) {
+                    if (is_bin_digit(tokenizer_peek(t))) {
+                        any_digit = TRUE;
+                    }
                     tokenizer_advance(t);
                 }
+                bad_prefix = !any_digit;
             } else {
                 while (!tokenizer_at_eof(t) && is_float_digit(tokenizer_peek(t))) {
                     tokenizer_advance(t);
                 }
                 // 3.14 / 0.5: a . csak szám előtt csinál NUMBER-t
                 if (tokenizer_peek(t) == '.' && is_digit(tokenizer_peek_next(t))) {
+                    is_float = TRUE;
                     tokenizer_advance(t); // .
                     while (!tokenizer_at_eof(t) && is_float_digit(tokenizer_peek(t))) {
                         tokenizer_advance(t);
                     }
                 }
+                if (!is_float && (tokenizer_peek(t) == 'e' || tokenizer_peek(t) == 'E')) {
+                    u64 save_pos = t->pos;
+                    u64 save_column = t->column;
+                    tokenizer_advance(t);
+                    if (tokenizer_peek(t) == '+' || tokenizer_peek(t) == '-') {
+                        tokenizer_advance(t);
+                    }
+                    if (is_digit(tokenizer_peek(t))) {
+                        is_float = TRUE;
+                        while (!tokenizer_at_eof(t) && is_float_digit(tokenizer_peek(t))) {
+                            tokenizer_advance(t);
+                        }
+                    } else {
+                        t->pos = save_pos;
+                        t->column = save_column;
+                    }
+                }
+                if (is_float) {
+                    if (!tokenizer_try_consume_suffix(t, "f32") &&
+                        !tokenizer_try_consume_suffix(t, "f64")) {
+                        // no suffix
+                    }
+                }
             }
-            tokenizer_push(t, TOKEN_NUMBER, start, line, column);
+            if (!is_float) {
+                static const char* suffixes[] = {
+                    "i8", "i16", "i32", "i64", "u8", "u16", "u32", "u64",
+                };
+                for (u64 i = 0; i < sizeof(suffixes) / sizeof(suffixes[0]); ++i) {
+                    if (tokenizer_try_consume_suffix(t, suffixes[i])) {
+                        break;
+                    }
+                }
+            }
+            tokenizer_push(t, bad_prefix ? TOKEN_INVALID : TOKEN_NUMBER, start, line, column);
             continue;
         }
 
@@ -287,6 +351,11 @@ static TokenKind tokenizer_keyword_kind(String8 value) {
     KEYWORD("enum",      TOKEN_ENUM);
     KEYWORD("effect",    TOKEN_EFFECT);
     KEYWORD("handler",   TOKEN_HANDLER);
+    KEYWORD("trait",     TOKEN_TRAIT);
+    KEYWORD("impl",      TOKEN_IMPL);
+    KEYWORD("dyn",       TOKEN_DYN);
+    KEYWORD("extern",    TOKEN_EXTERN);
+    KEYWORD("mod",       TOKEN_MOD);
 
     // Visibility & binding
     KEYWORD("pub",       TOKEN_PUB);
@@ -295,6 +364,7 @@ static TokenKind tokenizer_keyword_kind(String8 value) {
     KEYWORD("const",     TOKEN_CONST);
     KEYWORD("auto",      TOKEN_AUTO);
     KEYWORD("where",     TOKEN_WHERE);
+    KEYWORD("as",        TOKEN_AS);
 
     // Control flow
     KEYWORD("if",        TOKEN_IF);
@@ -307,6 +377,7 @@ static TokenKind tokenizer_keyword_kind(String8 value) {
     KEYWORD("return",    TOKEN_RETURN);
     KEYWORD("match",     TOKEN_MATCH);
     KEYWORD("transact",  TOKEN_TRANSACT);
+    KEYWORD("defer",     TOKEN_DEFER);
 
     // Effects
     KEYWORD("perform",   TOKEN_PERFORM);
@@ -320,6 +391,9 @@ static TokenKind tokenizer_keyword_kind(String8 value) {
     KEYWORD("offsetof",  TOKEN_OFFSETOF);
     KEYWORD("true",      TOKEN_TRUE);
     KEYWORD("false",     TOKEN_FALSE);
+    KEYWORD("null",      TOKEN_NULL);
+    KEYWORD("undef",     TOKEN_UNDEF);
+    KEYWORD("Self",      TOKEN_SELF);
 
     // Primitive types
     KEYWORD("i8",        TOKEN_I8);
@@ -335,6 +409,7 @@ static TokenKind tokenizer_keyword_kind(String8 value) {
     KEYWORD("char",      TOKEN_CHAR_TYPE);
     KEYWORD("bool",      TOKEN_BOOL);
     KEYWORD("sview",     TOKEN_SVIEW);
+    KEYWORD("never",     TOKEN_NEVER);
 
     #undef KEYWORD
 

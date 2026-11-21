@@ -147,6 +147,16 @@ STATIC_ASSERT(sizeof(f64) == 8, "Expected f64 to be 8 bytes.");
 #  error "Unknown platform!"
 #endif
 
+#ifndef T_RELEASE
+#  define T_RELEASE 0
+#endif
+
+#if defined(__GNUC__) || defined(__clang__)
+#  define T_PRINTF(fmt_index, args_index) __attribute__((format(printf, fmt_index, args_index)))
+#else
+#  define T_PRINTF(fmt_index, args_index)
+#endif
+
 #ifdef T_EXPORT
 // Exports
 #  ifdef _MSC_VER

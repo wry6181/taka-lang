@@ -47,6 +47,10 @@ static void map_ensure_empty(Map* map) {
     memset(map->flags, 0, map->capacity);
 }
 
+u64 map_debug_live_count(void) {
+    return 0;
+}
+
 Map* map_new(MemArena* arena) {
     if (!arena) {
         return NULL;

@@ -83,3 +83,9 @@ void vec_clear(Vector* v) {
         v->len = 0;
     }
 }
+
+void vec_pop(Vector* v) {
+    if (v && v->len > 0) {
+        v->len--;
+    }
+}

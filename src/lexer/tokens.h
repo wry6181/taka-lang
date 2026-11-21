@@ -12,6 +12,7 @@ enum TokenKind {
     TOKEN_STRING,
     TOKEN_CHAR,     // 'x'
     TOKEN_IDENTIFIER,
+    TOKEN_WILDCARD, // _
 
     // Brackets
     TOKEN_OPEN_BRACKET,   // [
@@ -84,6 +85,11 @@ enum TokenKind {
     TOKEN_ENUM,
     TOKEN_EFFECT,
     TOKEN_HANDLER,
+    TOKEN_TRAIT,
+    TOKEN_IMPL,
+    TOKEN_DYN,
+    TOKEN_EXTERN,
+    TOKEN_MOD,
 
     // Keywords — visibility & binding
     TOKEN_PUB,
@@ -92,6 +98,7 @@ enum TokenKind {
     TOKEN_CONST,
     TOKEN_AUTO,
     TOKEN_WHERE,
+    TOKEN_AS,
 
     // Keywords — control flow
     TOKEN_IF,
@@ -104,6 +111,7 @@ enum TokenKind {
     TOKEN_RETURN,
     TOKEN_MATCH,
     TOKEN_TRANSACT,
+    TOKEN_DEFER,
 
     // Keywords — effects
     TOKEN_PERFORM,
@@ -117,6 +125,9 @@ enum TokenKind {
     TOKEN_OFFSETOF,
     TOKEN_TRUE,
     TOKEN_FALSE,
+    TOKEN_NULL,
+    TOKEN_UNDEF,
+    TOKEN_SELF,
 
     // Primitive types
     TOKEN_I8,
@@ -132,6 +143,7 @@ enum TokenKind {
     TOKEN_CHAR_TYPE, // `char` (TOKEN_CHAR is the 'x' literal)
     TOKEN_BOOL,
     TOKEN_SVIEW,
+    TOKEN_NEVER,
 
     TOKEN_UNKNOWN,
     TOKEN_COUNT,

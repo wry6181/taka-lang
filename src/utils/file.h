@@ -23,12 +23,16 @@ static inline BinFile read_file(MemArena* arena, const char* path) {
         return result;
     }
 
-    i64 file_size = ftell(file);
-    if (file_size < 0) {
+    i64 file_size_signed = ftell(file);
+    if (file_size_signed < 0) {
         fclose(file);
         return result;
     }
-    rewind(file);
+    u64 file_size = (u64)file_size_signed;
+    if (fseek(file, 0, SEEK_SET) != 0) {
+        fclose(file);
+        return result;
+    }
 
     u8* data = PUSH_ARRAY(arena, u8, file_size);
 

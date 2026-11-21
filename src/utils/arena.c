@@ -1,6 +1,12 @@
 #include "arena.h"
 #include <string.h>
 
+static u64 g_live_arenas = 0;
+
+u64 arena_debug_live_count(void) {
+    return g_live_arenas;
+}
+
 MemArena *arena_create(u64 capacity){
     u64 size =  ALIGN_UP_POW2(sizeof(MemArena) + capacity, ARENA_ALIGN);
     MemArena* arena = (MemArena*)malloc(size);
@@ -9,12 +15,14 @@ MemArena *arena_create(u64 capacity){
     }
     arena->pos = 0;
     arena->capacity = size - sizeof(MemArena);
+    g_live_arenas++;
     return arena;
 }
 void arena_destroy(MemArena *arena){
     if(!arena) {
         return;
     }
+    g_live_arenas--;
     free(arena);
 }
 void *arena_push(MemArena *arena, u64 size, b32 zero){

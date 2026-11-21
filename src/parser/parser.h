@@ -3,6 +3,8 @@
 #include "lexer/tokens.h"
 #include "utils/utils.h"
 
+#include <setjmp.h>
+
 typedef struct Lookups Lookups; // defined in parser/lookup.h
 
 typedef struct ParserSymbol {
@@ -18,6 +20,11 @@ struct Parser {
   u64 pos;
   Lookups* lookups; // the four token lookups (bp/nud/led/stmt)
   Vector* symbols;  // declarations: name + mutability
+  Token pending_token;
+  bool has_pending;
+  bool suppress_struct_lit;
+  bool in_handler_op;
+  u32 depth;
 };
 
 static inline ParserSymbol* parser_find_symbol(Parser* p, String8 name) {
@@ -60,16 +67,20 @@ bool parser_has_tokens(const Parser* p);        // hasTokens() — also stops at
 Token parser_expect_error(Parser* p, TokenKind expected, const char* err);
 Token parser_expect(Parser* p, TokenKind expected);
 
-// Fatal parse error: log + exit(1) (Go panics there).
+// Fatal parse error: log + exit(1) (Go panics there). When an error
+// jump target is installed, parser_die longjmps instead of exiting.
 #if defined(__GNUC__)
 __attribute__((noreturn))
 #endif
 void parser_die(void);
 
+void parser_set_error_jmp(jmp_buf* target);
+
 // Statement dispatch: a registered StmtHandler for the current token wins;
 // otherwise the statement is parsed as an expression statement
 // (expr ;). Advances past exactly one statement.
 Stmt* parse_stmt(Parser* p);
+Stmt* parse_var_stmt(Parser* p);
 
 // Port of Go Parse(): parse the whole token stream into a block statement
 // (Go: return ast.BlockStmt{Body: Body}). Returns the STMT_BLOCK node —

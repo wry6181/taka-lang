@@ -33,6 +33,9 @@ typedef struct Map Map;
 Map* map_new(MemArena* arena);
 void map_free(Map* map);
 
+// Debug-only leak counter for malloc-backed backends (0 for arena-backed).
+u64 map_debug_live_count(void);
+
 // Upsert. FALSE only on NULL map or allocation failure.
 bool map_set(Map* map, u64 key, u64 value);
 

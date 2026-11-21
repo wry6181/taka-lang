@@ -10,6 +10,7 @@ String8 tokenkind_to_string8(TokenKind kind) {
         case TOKEN_STRING: return str8_lit("STRING");
         case TOKEN_CHAR: return str8_lit("CHAR");
         case TOKEN_IDENTIFIER: return str8_lit("IDENTIFIER");
+        case TOKEN_WILDCARD: return str8_lit("WILDCARD");
 
         case TOKEN_OPEN_BRACKET: return str8_lit("OPEN_BRACKET");
         case TOKEN_CLOSE_BRACKET: return str8_lit("CLOSE_BRACKET");
@@ -73,6 +74,11 @@ String8 tokenkind_to_string8(TokenKind kind) {
         case TOKEN_ENUM: return str8_lit("ENUM");
         case TOKEN_EFFECT: return str8_lit("EFFECT");
         case TOKEN_HANDLER: return str8_lit("HANDLER");
+        case TOKEN_TRAIT: return str8_lit("TRAIT");
+        case TOKEN_IMPL: return str8_lit("IMPL");
+        case TOKEN_DYN: return str8_lit("DYN");
+        case TOKEN_EXTERN: return str8_lit("EXTERN");
+        case TOKEN_MOD: return str8_lit("MOD");
 
         case TOKEN_PUB: return str8_lit("PUB");
         case TOKEN_PRIVATE: return str8_lit("PRIVATE");
@@ -80,6 +86,7 @@ String8 tokenkind_to_string8(TokenKind kind) {
         case TOKEN_CONST: return str8_lit("CONST");
         case TOKEN_AUTO: return str8_lit("AUTO");
         case TOKEN_WHERE: return str8_lit("WHERE");
+        case TOKEN_AS: return str8_lit("AS");
 
         case TOKEN_IF: return str8_lit("IF");
         case TOKEN_ELSE: return str8_lit("ELSE");
@@ -91,6 +98,7 @@ String8 tokenkind_to_string8(TokenKind kind) {
         case TOKEN_RETURN: return str8_lit("RETURN");
         case TOKEN_MATCH: return str8_lit("MATCH");
         case TOKEN_TRANSACT: return str8_lit("TRANSACT");
+        case TOKEN_DEFER: return str8_lit("DEFER");
 
         case TOKEN_PERFORM: return str8_lit("PERFORM");
         case TOKEN_HANDLE: return str8_lit("HANDLE");
@@ -102,6 +110,9 @@ String8 tokenkind_to_string8(TokenKind kind) {
         case TOKEN_OFFSETOF: return str8_lit("OFFSETOF");
         case TOKEN_TRUE: return str8_lit("TRUE");
         case TOKEN_FALSE: return str8_lit("FALSE");
+        case TOKEN_NULL: return str8_lit("NULL");
+        case TOKEN_UNDEF: return str8_lit("UNDEF");
+        case TOKEN_SELF: return str8_lit("SELF");
 
         case TOKEN_I8: return str8_lit("I8");
         case TOKEN_I16: return str8_lit("I16");
@@ -116,6 +127,7 @@ String8 tokenkind_to_string8(TokenKind kind) {
         case TOKEN_CHAR_TYPE: return str8_lit("CHAR_TYPE");
         case TOKEN_BOOL: return str8_lit("BOOL");
         case TOKEN_SVIEW: return str8_lit("SVIEW");
+        case TOKEN_NEVER: return str8_lit("NEVER");
 
         case TOKEN_COUNT: return str8_lit("COUNT");
     }

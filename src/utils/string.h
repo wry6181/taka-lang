@@ -49,7 +49,7 @@ static inline void str8_trim(String8 *str) {
 static inline String8 str8_slice_at(String8 *str, char c) {
   String8 result = {0};
   for (u64 i = 0; i < str->size; ++i) {
-    if (str->data[i] == c) {
+    if (str->data[i] == (u8)c) {
       result.data = &str->data[0];
       result.size = i;
       str8_cut_left(str, i + 1);
@@ -154,8 +154,8 @@ static inline b8 str8_is_empty(String8 *s) {
 String8 str8_append(MemArena *arena, String8 a, String8 b);
 String8 str8_to_cstr(MemArena *arena, String8 a);
 String8 str8_copy(MemArena *arena, String8 s);
-String8 str8_pushfv(MemArena *arena, char const *fmt, va_list ap);
-String8 str8_pushf(MemArena *arena, char const *fmt, ...);
+String8 str8_pushfv(MemArena *arena, char const *fmt, va_list ap) T_PRINTF(2, 0);
+String8 str8_pushf(MemArena *arena, char const *fmt, ...) T_PRINTF(2, 3);
 
 // Debug helper that needs both String8 and arena — also defined in string.c
 void arena_print_mem(String8 name, MemArena *arena);
